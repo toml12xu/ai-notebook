@@ -1,0 +1,67 @@
+/* Theme A — Warm Paper: lighter lecture-room palette with larger type. */
+:root {
+  --bg-deep: #f7f0e7;
+  --bg-surface: #fffaf2;
+  --bg-card: #f0e2d0;
+  --text-primary: #33261d;
+  --text-secondary: #655346;
+  --text-muted: #9b806b;
+  --accent: #b85f2f;
+  --accent-dim: rgba(184, 95, 47, 0.14);
+  --accent-glow: rgba(184, 95, 47, 0.08);
+  --border: rgba(74, 53, 38, 0.16);
+  --success: #3d7c57;
+  --warning: #b58221;
+  --font-display: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "SimSun", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at 85% 15%, rgba(184, 95, 47, 0.12), transparent 28%),
+    var(--bg-deep) !important;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(184, 95, 47, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184, 95, 47, 0.035) 1px, transparent 1px) !important;
+}
+
+.title, h1, h2, .statement h2 {
+  font-family: var(--font-display) !important;
+}
+
+.title { font-size: 104px !important; }
+p.subtitle { font-size: 34px !important; }
+div.subtitle { font-size: 21px !important; }
+h2, .header h2 { font-size: 52px !important; }
+.statement h2 { font-size: 68px !important; }
+.kicker, .header .kicker { font-size: 15px !important; }
+h3, .pain-card h3, .method-card h3, .feature .text h3, .step h3 { font-size: 22px !important; }
+p, li, .pain-card p, .method-card p, .feature .text p, .rule-desc, .bottom-insight p {
+  font-size: 18px !important;
+}
+.compare-col li, .checklist .check-item, .skill-card .skill-desc { font-size: 17px !important; }
+.phase .phase-title, .flow-node .node-title, .stage .stage-title, .skill-card .skill-name { font-size: 18px !important; }
+.phase .phase-sub, .flow-node .node-desc, .stage .stage-desc, .output-file .file-info .file-desc { font-size: 14px !important; }
+.annotation, .page-number, .meta-item, .method-card .method-num, .triggers .triggers-label, .checklist .check-label {
+  font-size: 13px !important;
+}
+
+.pain-card,
+.method-card,
+.diagram-panel,
+.triggers,
+.phase,
+.compare-col,
+.vault-mock,
+.checklist,
+.anti-card,
+.correct-card,
+.stage,
+.output-file,
+.skill-card,
+.step {
+  box-shadow: 0 18px 42px rgba(93, 63, 38, 0.08);
+}

@@ -1,0 +1,13 @@
+# Docling Skill Dependencies
+# Install with: pip install -r requirements.txt
+
+docling>=2.70.0
+
+# Optional: For table export to pandas
+pandas>=2.0.0
+
+# Optional: For VLM support
+# docling[vlm]
+
+# Optional: For audio transcription
+# docling[audio]

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>03 · 核心理念</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 80px 140px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 48px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232, 148, 90, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 148, 90, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .statement {
+    max-width: 900px;
+  }
+  .statement h2 {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .statement .dim { color: var(--text-muted); }
+  .statement .bright { color: var(--text-primary); }
+  .statement .highlight { color: var(--accent); }
+
+  .comparison {
+    display: flex;
+    gap: 60px;
+    align-items: stretch;
+    margin-top: 16px;
+  }
+
+  .compare-col {
+    flex: 1;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: left;
+  }
+  .compare-col.old {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    opacity: 0.7;
+  }
+  .compare-col.new {
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+  }
+
+  .compare-col .col-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .compare-col.old .col-label { color: var(--text-muted); }
+  .compare-col.new .col-label { color: var(--accent); }
+
+  .compare-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .compare-col li {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+  }
+  .compare-col.old li::before {
+    content: '×';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .compare-col.new li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .compare-col.new li {
+    color: var(--text-primary);
+  }
+
+  .divider {
+    width: 1px;
+    background: var(--border);
+    align-self: stretch;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <div class="kicker">核心理念</div>
+
+  <div class="statement">
+    <h2><span class="dim">不是</span> <span class="bright">Coder</span>，<span class="dim">而是</span> <span class="highlight">Coach</span></h2>
+  </div>
+
+  <div class="comparison">
+    <div class="compare-col old">
+      <div class="col-label">传统 AI 助手</div>
+      <ul>
+        <li>直接给代码</li>
+        <li>一次性长回复</li>
+        <li>用户被动阅读</li>
+        <li>聊完即丢</li>
+      </ul>
+    </div>
+    <div class="divider"></div>
+    <div class="compare-col new">
+      <div class="col-label">AI Coach</div>
+      <ul>
+        <li>引导你自己得出答案</li>
+        <li>渐进式交互对话</li>
+        <li>学习者主动选择方向</li>
+        <li>洞察自动沉淀到 Obsidian</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-number">03 / 10</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>08 · 实施规划</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 80px 140px;
+    gap: 40px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232, 148, 90, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 148, 90, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+  }
+  h2 { font-size: 42px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    justify-content: center;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 800px;
+  }
+
+  /* Pipeline visualization */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .stage {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 20px;
+    text-align: center;
+    position: relative;
+  }
+  .stage.active {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .stage .stage-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .stage .stage-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .stage .stage-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .stage-arrow {
+    width: 32px;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.4;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .stage-arrow::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 5px solid var(--accent);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    opacity: 0.6;
+  }
+
+  /* Output files */
+  .output-row {
+    display: flex;
+    gap: 20px;
+  }
+  .output-file {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .output-file .file-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .output-file .file-info .file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .output-file .file-info .file-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <div class="header">
+    <div class="accent-line"></div>
+    <div class="kicker">第三部分 · 行动</div>
+    <h2>从学习到实施</h2>
+  </div>
+
+  <div class="content">
+    <div class="subtitle">
+      当学习者准备好动手时，AI Coach 无缝衔接到 planning-with-files 工作流——将教学中积累的概念、决策、洞察自动注入结构化的实施计划。
+    </div>
+
+    <div class="pipeline">
+      <div class="stage">
+        <div class="stage-num">01</div>
+        <div class="stage-title">教学积累</div>
+        <div class="stage-desc">概念 · 图表 · 决策</div>
+      </div>
+      <div class="stage-arrow"></div>
+      <div class="stage active">
+        <div class="stage-num">02</div>
+        <div class="stage-title">触发规划</div>
+        <div class="stage-desc">「帮我做个计划」</div>
+      </div>
+      <div class="stage-arrow"></div>
+      <div class="stage">
+        <div class="stage-num">03</div>
+        <div class="stage-title">上下文注入</div>
+        <div class="stage-desc">自动填充 findings</div>
+      </div>
+      <div class="stage-arrow"></div>
+      <div class="stage">
+        <div class="stage-num">04</div>
+        <div class="stage-title">交付计划</div>
+        <div class="stage-desc">3 文件结构</div>
+      </div>
+    </div>
+
+    <div class="output-row">
+      <div class="output-file">
+        <div class="file-icon">TP</div>
+        <div class="file-info">
+          <div class="file-name">task_plan.md</div>
+          <div class="file-desc">阶段性分解 · 优先级 · 依赖关系</div>
+        </div>
+      </div>
+      <div class="output-file">
+        <div class="file-icon">FD</div>
+        <div class="file-info">
+          <div class="file-name">findings.md</div>
+          <div class="file-desc">教学中积累的洞察 · 自动注入</div>
+        </div>
+      </div>
+      <div class="output-file">
+        <div class="file-icon">PG</div>
+        <div class="file-info">
+          <div class="file-name">progress.md</div>
+          <div class="file-desc">进度追踪 · 状态同步</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-number">08 / 10</div>
+</div>
+</body>
+</html>

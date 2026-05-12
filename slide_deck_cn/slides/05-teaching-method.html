@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>05 · Teaching Method</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 60px 100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 40px 60px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79, 195, 247, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 195, 247, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  /* Header spans full width */
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .header .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .header h2 {
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Left column — method list */
+  .methods {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .method-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .method-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+  .method-card .method-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .method-card h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+  .method-card p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* Right column — flow diagram */
+  .diagram-panel {
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .diagram-panel .panel-label {
+    position: absolute;
+    top: 16px;
+    left: 24px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 500px;
+  }
+  .flow-node {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 24px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+  }
+  .flow-node.accent {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .flow-node .node-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .flow-node .node-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+
+  .flow-arrow {
+    width: 2px;
+    height: 24px;
+    background: var(--accent);
+    opacity: 0.4;
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--accent);
+    opacity: 0.6;
+  }
+
+  /* Loop indicator */
+  .loop-bracket {
+    position: absolute;
+    right: -40px;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    border: 2px solid var(--accent);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    opacity: 0.3;
+  }
+  .loop-label {
+    position: absolute;
+    right: -80px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .page-number {
+    position: absolute;
+    bottom: 40px;
+    right: 80px;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="accent-line"></div>
+    <div class="kicker">第一部分 · 教学</div>
+    <h2>教学方法</h2>
+  </div>
+
+  <!-- Left: Method cards -->
+  <div class="methods">
+    <div class="method-card">
+      <div class="method-num">01</div>
+      <h3>苏格拉底式提问</h3>
+      <p>从不直接给答案——通过交互式问题检查点，用精心构造的选项引导学习者自主发现。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num">02</div>
+      <h3>渐进式复杂度</h3>
+      <p>从高层概览开始，确认就绪后再深入。根据学习者展现的掌握水平自适应调整节奏。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num">03</div>
+      <h3>可视化图表（Mermaid）</h3>
+      <p>所有架构、流程和关系都渲染为 Mermaid 图——结构化、可保存，绝不使用 ASCII 艺术。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num">04</div>
+      <h3>生动类比</h3>
+      <p>用日常经验锚定抽象概念。不是每处都用，而是在恰当的时机给出恰当的类比。</p>
+    </div>
+  </div>
+
+  <!-- Right: Interaction flow diagram -->
+  <div class="diagram-panel">
+    <div class="panel-label">交互循环</div>
+
+    <div class="flow" style="position: relative;">
+      <div class="flow-node">
+        <div class="node-title">解释概念</div>
+        <div class="node-desc">概念优先，不剧透</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node accent">
+        <div class="node-title">ask_questions()</div>
+        <div class="node-desc">苏格拉底检查点</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node">
+        <div class="node-title">适应性回应</div>
+        <div class="node-desc">深入 / 类比 / 图表 / 下一个</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node">
+        <div class="node-title">提供保存</div>
+        <div class="node-desc">保存到 Obsidian？</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node accent">
+        <div class="node-title">ask_questions()</div>
+        <div class="node-desc">继续 / 新话题 / 结束</div>
+      </div>
+
+      <!-- Loop bracket -->
+      <div class="loop-bracket"></div>
+      <div class="loop-label">Infinite Loop</div>
+    </div>
+  </div>
+
+  <div class="page-number">05 / 10</div>
+</div>
+</body>
+</html>

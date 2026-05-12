@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>09 · 生态矩阵</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 80px 140px;
+    gap: 36px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232, 148, 90, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 148, 90, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+  }
+  h2 { font-size: 42px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 700px;
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+  }
+
+  /* Center hub */
+  .hub {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .hub .hub-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .hub::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    opacity: 0.15;
+  }
+
+  /* Skill cards grid */
+  .skills-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .skill-card .skill-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .skill-card .skill-name .badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .skill-card .skill-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .skill-card.core {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <div class="header">
+    <div class="accent-line"></div>
+    <div class="kicker">生态</div>
+    <h2>围绕 AI Coach 的能力矩阵</h2>
+  </div>
+
+  <div class="subtitle">AI Coach 是核心引擎，周围的辅助 skill 为它提供格式化、存储、规划、转换等能力支撑。</div>
+
+  <div class="content">
+    <div class="hub">
+      <div class="hub-text">AI<br>Coach</div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card core">
+        <div class="skill-name">obsidian-markdown <span class="badge">格式</span></div>
+        <div class="skill-desc">Wikilinks · Callouts · Properties · LaTeX 数学公式支持</div>
+      </div>
+      <div class="skill-card core">
+        <div class="skill-name">planning-with-files <span class="badge">规划</span></div>
+        <div class="skill-desc">结构化任务分解 · 进度追踪 · 持久化计划文件</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">obsidian-bases <span class="badge">查询</span></div>
+        <div class="skill-desc">数据库视图 · 过滤器 · 公式 · 汇总统计</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">json-canvas <span class="badge">可视化</span></div>
+        <div class="skill-desc">思维导图 · 知识图谱 · 节点关系可视化</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">docling <span class="badge">转换</span></div>
+        <div class="skill-desc">PDF / DOCX / PPTX / 图片 → Markdown 转换</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">pdf · docx · pptx <span class="badge">输出</span></div>
+        <div class="skill-desc">生成专业文档 · 表单填写 · 演示文稿创建</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-number">09 / 10</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>06 · 保存到 Obsidian</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 80px 140px;
+    gap: 40px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232, 148, 90, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 148, 90, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+  }
+  h2 { font-size: 42px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  /* Left — feature list */
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .feature {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .feature .icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .feature .text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .feature .text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* Right — vault structure mockup */
+  .vault-mock {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text-secondary);
+  }
+  .vault-mock .folder { color: var(--text-primary); font-weight: 500; }
+  .vault-mock .file { color: var(--text-secondary); }
+  .vault-mock .comment { color: var(--text-muted); font-size: 12px; }
+  .vault-mock .highlight { color: var(--accent); }
+  .indent-1 { padding-left: 24px; }
+  .indent-2 { padding-left: 48px; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <div class="header">
+    <div class="accent-line"></div>
+    <div class="kicker">第二部分 · 持久化</div>
+    <h2>保存到 Obsidian</h2>
+  </div>
+
+  <div class="content">
+    <div class="features">
+      <div class="feature">
+        <div class="icon">1</div>
+        <div class="text">
+          <h3>自动识别可保存内容</h3>
+          <p>每次教学回复后，AI 主动询问是否保存。支持全量保存或选择性保存。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="icon">2</div>
+        <div class="text">
+          <h3>Obsidian 原生格式</h3>
+          <p>YAML frontmatter + Callouts + Wikilinks + 标签系统，完美融入你的知识库。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="icon">3</div>
+        <div class="text">
+          <h3>图文一体保存</h3>
+          <p>文字解释和 Mermaid 图表作为不可分割的整体一并保存，绝不遗漏。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="icon">4</div>
+        <div class="text">
+          <h3>自动索引与分类</h3>
+          <p>按概念 / 代码 / 图表 / 日志分类归档，自动更新 _INDEX.md 索引文件。</p>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="icon">5</div>
+        <div class="text">
+          <h3>快捷命令</h3>
+          <p><code>!save</code> / <code>!save 主题 #标签</code> 一键保存，零摩擦。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="vault-mock">
+      <div class="folder">📁 AI-Chats/</div>
+      <div class="indent-1 file">📄 _INDEX.md <span class="comment">← 自动索引</span></div>
+      <div class="indent-1 folder">📁 concepts/</div>
+      <div class="indent-2 file highlight">📝 苏格拉底式教学法.md</div>
+      <div class="indent-2 file highlight">📝 渐进复杂度原则.md</div>
+      <div class="indent-1 folder">📁 diagrams/</div>
+      <div class="indent-2 file highlight">📝 会话生命周期图.md</div>
+      <div class="indent-1 folder">📁 code/</div>
+      <div class="indent-2 file">📝 React hooks 解析.md</div>
+      <div class="indent-1 folder">📁 plans/</div>
+      <div class="indent-2 file">📝 重构数据层.md</div>
+    </div>
+  </div>
+
+  <div class="page-number">06 / 10</div>
+</div>
+</body>
+</html>

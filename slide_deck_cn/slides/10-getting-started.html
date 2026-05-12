@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>10 · 快速开始</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    padding: 80px 140px;
+    justify-content: center;
+    gap: 48px;
+  }
+
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232, 148, 90, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232, 148, 90, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+  }
+  h2 { font-size: 42px; font-weight: 600; letter-spacing: -0.01em; }
+
+  .steps-row {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .step {
+    flex: 1;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .step .step-num {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+  .step h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .step .code-block {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .step .code-block .cmd { color: var(--accent); }
+  .step p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-section {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .cta-text {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .cta-badge {
+    background: var(--accent);
+    color: var(--bg-deep);
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .cta-repo {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <div class="header">
+    <div class="accent-line"></div>
+    <div class="kicker">开始使用</div>
+    <h2>三步接入</h2>
+  </div>
+
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>克隆仓库</h3>
+      <div class="code-block">
+        <span class="cmd">git clone</span> ai-notebook.git
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>复制 Skills</h3>
+      <div class="code-block">
+        <span class="cmd">Copy-Item</span> -Recurse<br>skills\* ~/.copilot/skills/
+      </div>
+      <p>也支持 Cursor：~/.cursor/skills/</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>开始学习</h3>
+      <div class="code-block">
+        在 AI 助手的 Chat 中输入：<br><span class="cmd">「教我」「coach mode」「学习模式」</span>
+      </div>
+      <p>AI 自动检测意图并激活 Coach skill</p>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <div class="cta-text">用 AI 的方式学习，而不只是用 AI。</div>
+    <div class="cta-badge">立即体验</div>
+    <div class="cta-repo">github.com/.../ai-notebook</div>
+  </div>
+
+  <div class="page-number">10 / 10</div>
+</div>
+</body>
+</html>

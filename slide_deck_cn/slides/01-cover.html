@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>01 · Cover</title>
+<link rel="stylesheet" href="../shared/tokens.css">
+<script src="../shared/theme-loader.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  .slide {
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 140px;
+    padding-right: 140px;
+    position: relative;
+  }
+
+  /* Background grid pattern — Fathom signature */
+  .bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79, 195, 247, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 195, 247, 0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  /* Decorative data viz — top-right corner */
+  .data-ornament {
+    position: absolute;
+    top: 60px;
+    right: 100px;
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+  }
+  .data-ornament .bar {
+    width: 4px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0.25;
+  }
+  .data-ornament .bar.active { opacity: 0.7; }
+
+  /* Main content */
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: var(--sp-4);
+  }
+
+  .title {
+    font-size: 88px;
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-3);
+  }
+  .title .highlight {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 760px;
+    margin-top: var(--sp-3);
+  }
+
+  /* Bottom metadata bar */
+  .meta-bar {
+    position: absolute;
+    bottom: 60px;
+    left: 140px;
+    right: 140px;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-6);
+    border-top: 1px solid var(--border);
+    padding-top: var(--sp-3);
+  }
+  .meta-item {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+  .meta-item span {
+    color: var(--text-secondary);
+    margin-left: 6px;
+  }
+
+  /* Decorative circuit lines — left edge */
+  .circuit {
+    position: absolute;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .circuit .line { width: 2px; flex: 1; background: var(--border); }
+  .circuit .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg-deep);
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg-grid"></div>
+
+  <!-- Left circuit decoration -->
+  <div class="circuit">
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+    <div class="dot"></div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Top-right data ornament -->
+  <div class="data-ornament">
+    <div class="bar" style="height: 18px;"></div>
+    <div class="bar" style="height: 32px;"></div>
+    <div class="bar active" style="height: 52px;"></div>
+    <div class="bar" style="height: 28px;"></div>
+    <div class="bar" style="height: 42px;"></div>
+    <div class="bar active" style="height: 64px;"></div>
+    <div class="bar" style="height: 36px;"></div>
+    <div class="bar" style="height: 22px;"></div>
+    <div class="bar active" style="height: 48px;"></div>
+    <div class="bar" style="height: 14px;"></div>
+  </div>
+
+  <!-- Main content -->
+  <div class="kicker">AI 增强学习</div>
+  <h1 class="title">AI <span class="highlight">Coach</span></h1>
+  <p class="subtitle">一个交互式学习伙伴——通过苏格拉底式提问、可视化图表、持久化知识保存，引导你深度思考。</p>
+
+  <!-- Bottom metadata -->
+  <div class="meta-bar">
+    <div class="meta-item">项目<span>AI Notebook</span></div>
+    <div class="meta-item">版本<span>1.0</span></div>
+    <div class="meta-item">技术栈<span>Obsidian · Cursor · VS Code Copilot</span></div>
+    <div class="meta-item">日期<span>2026-05</span></div>
+  </div>
+
+  <div class="page-number">01 / 10</div>
+</div>
+</body>
+</html>

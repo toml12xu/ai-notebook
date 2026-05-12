@@ -1,0 +1,68 @@
+/* Theme C — Sage Chalk: calm coaching palette with green structural cues. */
+:root {
+  --bg-deep: #eff5ee;
+  --bg-surface: #fbfdf9;
+  --bg-card: #dfeadd;
+  --text-primary: #1f3b31;
+  --text-secondary: #4d675d;
+  --text-muted: #81968d;
+  --accent: #2f8f6a;
+  --accent-dim: rgba(47, 143, 106, 0.14);
+  --accent-glow: rgba(47, 143, 106, 0.08);
+  --border: rgba(31, 59, 49, 0.14);
+  --success: #2f8f6a;
+  --warning: #af7c24;
+  --font-display: "Gill Sans", "Aptos Display", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --font-body: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(47, 143, 106, 0.12), transparent 26%),
+    radial-gradient(circle at 92% 82%, rgba(175, 124, 36, 0.10), transparent 28%),
+    var(--bg-deep) !important;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(47, 143, 106, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 143, 106, 0.04) 1px, transparent 1px) !important;
+}
+
+.title, h1, h2, .statement h2 {
+  font-family: var(--font-display) !important;
+}
+
+.title { font-size: 102px !important; }
+p.subtitle { font-size: 34px !important; }
+div.subtitle { font-size: 21px !important; }
+h2, .header h2 { font-size: 51px !important; }
+.statement h2 { font-size: 67px !important; }
+.kicker, .header .kicker { font-size: 15px !important; }
+h3, .pain-card h3, .method-card h3, .feature .text h3, .step h3 { font-size: 22px !important; }
+p, li, .pain-card p, .method-card p, .feature .text p, .rule-desc, .bottom-insight p {
+  font-size: 18px !important;
+}
+.compare-col li, .checklist .check-item, .skill-card .skill-desc { font-size: 17px !important; }
+.phase .phase-title, .flow-node .node-title, .stage .stage-title, .skill-card .skill-name { font-size: 18px !important; }
+.phase .phase-sub, .flow-node .node-desc, .stage .stage-desc, .output-file .file-info .file-desc { font-size: 14px !important; }
+.annotation, .page-number, .meta-item, .method-card .method-num, .triggers .triggers-label, .checklist .check-label {
+  font-size: 13px !important;
+}
+
+.pain-card,
+.method-card,
+.diagram-panel,
+.triggers,
+.phase,
+.compare-col,
+.vault-mock,
+.checklist,
+.anti-card,
+.correct-card,
+.stage,
+.output-file,
+.skill-card,
+.step {
+  box-shadow: 0 18px 38px rgba(31, 59, 49, 0.07);
+}
