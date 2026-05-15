@@ -179,12 +179,13 @@ When in learning mode, follow these guidelines throughout the conversation:
    - Use `erDiagram` for data relationships
    - Use `graph` for simple dependency or hierarchy visualizations
 
-   **Markup safety rules**:
-   - **No HTML tags**: Never use `<br/>`, `<b>`, `<i>` in labels. Split into separate nodes instead.
-   - **No angle brackets**: Avoid `<` and `>` in labels. Write `shared_ptr of int` not `shared_ptr<int>`.
+   **Markup safety rules** (apply to the `renderMermaidDiagram` tool / VS Code chat context):
+   - **No `<b>`, `<i>` HTML tags**: Never use formatting tags in labels.
+   - **`<br/>` for line breaks**: When a label needs a line break, use `<br/>`. Do NOT use `\n` — it appears literally in Mermaid renderers and does not produce a line break.
+   - **No angle brackets for generics**: Avoid `<` and `>` in labels. Write `shared_ptr of int` not `shared_ptr<int>`.
    - **No `&` in labels or edges**: Use the word "and" instead.
    - **No Unicode symbols in diagram markup**: Avoid `→`, `←`, `⇒`. Use ASCII `->`, `<-`, `=>`.
-   - **Keep labels short**: Under 30 characters. Long labels with punctuation break parsers.
+   - **Keep labels short**: Under 30 characters where possible. Long labels with punctuation can break parsers.
 
 
 8. **Mathematical Notation**: When outputting mathematical formulas, use LaTeX format:
@@ -426,6 +427,22 @@ Ask or infer (use sensible defaults if not provided):
 - **Category**: concepts | code | diagrams | daily
 
 ### Step 3: Format the Note with Obsidian Syntax
+
+> [!CRITICAL] **Mermaid Line-Break Rule for Obsidian**
+>
+> When writing Mermaid diagrams into a `.md` file (for Obsidian), **`\n` inside node labels does NOT produce a line break** — it appears as the literal characters `\n` in the rendered diagram.
+>
+> **Always use `<br/>` for line breaks in Mermaid node labels when saving to markdown files.**
+>
+> - In VS Code chat (via `renderMermaidDiagram` tool): use `<br/>` in markup strings
+> - In Obsidian `.md` files: use `<br/>` inside node label strings
+>
+> **Anti-patterns (NEVER do these in saved files):**
+> - `A["line one\nline two"]` — **WRONG**: `\n` renders literally, not as a line break
+> - Copy-pasting Mermaid markup from the chat without converting `\n` → `<br/>` — **WRONG**
+>
+> **Correct pattern:**
+> - `A["line one<br/>line two"]` — **CORRECT**: renders as two lines in Obsidian
 
 Use this template with **Obsidian Properties** (YAML frontmatter):
 
