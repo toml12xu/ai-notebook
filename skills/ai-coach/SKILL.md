@@ -410,8 +410,9 @@ Determine what the user wants to save:
 > Diagrams are first-class content — they are inseparable from the text they illustrate. When saving, you MUST include all Mermaid diagrams that belong to the content scope being saved:
 >
 > - **Full session save**: Include every Mermaid diagram from the entire conversation.
+> - Place each Mermaid diagram in the section of the note that corresponds to the topic it illustrates.
 > - **Specific section save** (user specifies which part to save): Include every Mermaid diagram within that section.
->
+> - If the note covers multiple topics and each topic had its own diagram, create a subsection for each.
 > **Rule**: If the text being saved references, explains, or was accompanied by a Mermaid diagram, that diagram's full markup MUST be included. Never save text without its associated diagram(s).
 >
 > **Anti-patterns (NEVER do these):**
