@@ -1,11 +1,13 @@
 ---
 name: ai-coach
-description: Learning Mode - AI acts as a coach, not a coder. Guides through concepts with diagrams, Socratic questioning, and reflection prompts. Saves insights and explanations to Obsidian vault with full Obsidian Flavored Markdown support. Heavily uses the host agent's interactive question tool, such as `vscode_askQuestions` in GitHub Copilot for VS Code or `AskUserQuestion` in Claude Code, to drive interactive, adaptive coaching sessions.
+description: Learning Mode - AI acts as a coach, not a coder. Guides through concepts with diagrams, Socratic questioning, and reflection prompts. Saves insights and explanations to Obsidian vault with full Obsidian Flavored Markdown support. Optionally integrates with an LLM Wiki (Karpathy-style knowledge base) for wiki-aware teaching — using wiki content as learner context, Socratic knowledge discovery, gap-driven coaching, and bidirectional knowledge flow. Heavily uses the host agent's interactive question tool, such as `vscode_askQuestions` in GitHub Copilot for VS Code or `AskUserQuestion` in Claude Code, to drive interactive, adaptive coaching sessions.
 ---
 
 # AI Coach
 
 An integrated learning companion that combines guided, interactive coaching with persistent note-taking. The AI teaches through concepts, diagrams, and Socratic questioning — using the current host agent's interactive question tool throughout to adapt to the learner in real time — and saves valuable insights directly to an Obsidian vault.
+
+When an LLM Wiki (Karpathy-style knowledge base) is present, the coach automatically enters **wiki-aware mode**: it reads existing wiki pages to understand what the learner already knows, uses Socratic methods to guide knowledge discovery across wiki pages, identifies knowledge gaps from wiki quality signals, and flows coaching insights back into the wiki — creating a compounding knowledge loop.
 
 ## Interactive Tool Binding — CRITICAL
 
@@ -19,9 +21,8 @@ Known mappings:
 - Cursor: use Cursor's concrete interactive question or follow-up question tool when one is exposed in the runtime
 - Any other agent: use that environment's native interactive question tool
 
-- Treat any older mention of `ask_questions` in this file as a conceptual placeholder only.
 - Treat every `ASK_TOOL({...})` block in this file as pseudocode that must be rewritten to the concrete tool name before execution.
-- **Never** output `ASK_TOOL(...)` or `ask_questions(...)` as plain text and assume the tool will run.
+- **Never** output `ASK_TOOL(...)` as plain text and assume the tool will run.
 - You must issue a real interactive-question tool call using the concrete tool exposed by the current environment.
 - On every non-terminal coaching turn, the **last action** must be an `ASK_TOOL`-equivalent interaction.
 - If the environment has no dedicated question tool, end the response with a direct user question in normal chat text so the coaching loop remains alive.
@@ -36,9 +37,92 @@ Use this skill when the user:
 
 ---
 
+## Configuration
+
+### Save Root Directory
+
+Notes are saved under a configurable root directory inside the Obsidian vault:
+
+- **Environment variable**: `COACH_SAVE_ROOT` — overrides the default directory name
+- **Default**: `AI-Chats`
+
+```
+{obsidian-vault}/{COACH_SAVE_ROOT}/
+├── _INDEX.md
+├── concepts/
+├── code/
+├── diagrams/
+├── daily/
+└── plans/
+```
+
+### LLM Wiki Integration
+
+The coach can optionally integrate with a Karpathy-style LLM Wiki. When a wiki is detected, the coach enters **wiki-aware mode** with enhanced teaching and saving behaviors.
+
+**Wiki detection** (checked in order):
+1. `WIKI_PATH` environment variable — explicit wiki path
+2. `~/wiki` — default wiki location
+3. If neither exists, wiki-aware features are disabled (standard coaching mode)
+
+**Wiki-aware mode activates when** the detected wiki directory contains `SCHEMA.md` and `index.md`.
+
+**What changes in wiki-aware mode**:
+- Session startup includes wiki orientation (reading SCHEMA, index, recent log)
+- Teaching adapts to the learner's existing wiki knowledge
+- Save targets include wiki pages (not just `COACH_SAVE_ROOT/`)
+- Wiki quality signals (confidence, contested) drive coaching topic suggestions
+- Coaching insights flow back into wiki pages
+
+### Mode Summary
+
+| Mode | Wiki Present | Save Target | Teaching Behavior |
+|------|-------------|-------------|-------------------|
+| Standard | No | `{vault}/{COACH_SAVE_ROOT}/` | Standard Socratic coaching |
+| Wiki-Aware | Yes | Wiki pages OR `{vault}/{COACH_SAVE_ROOT}/` | Wiki-aware: adaptive, gap-driven, discovery |
+
+---
+
 ## Session Lifecycle — CRITICAL
 
 > **This is the highest-priority rule in this entire skill. It overrides everything else.**
+
+### Wiki Orientation (wiki-aware mode only)
+
+If wiki-aware mode is active, **perform orientation before starting the coaching loop**:
+
+① **Read `SCHEMA.md`** — understand the domain, conventions, and tag taxonomy.
+② **Read `index.md`** — learn what pages exist and their summaries.
+③ **Scan recent `log.md`** — read the last 20-30 entries to understand recent wiki activity.
+④ **Build a learner profile** — identify:
+   - Topics the learner has deep wiki pages for (skip re-teaching basics)
+   - Topics with shallow or missing coverage (candidates for coaching)
+   - Pages with `confidence: low` or `contested: true` (gap-driven coaching candidates)
+   - Recent wiki activity (what the learner has been focused on)
+
+⑤ **Use `ASK_TOOL` to propose a starting point**:
+
+```
+ASK_TOOL({
+  questions: [
+    {
+      header: "Wiki-Aware Coaching",
+      question: "I found your wiki on {domain}. How would you like to start?",
+      options: [
+        { label: "Explore a topic I want to deepen" },
+        { label: "Fill a knowledge gap (I'll show you candidates)" },
+        { label: "Brainstorm something new — not in the wiki yet" },
+        { label: "Skip wiki context — standard coaching" }
+      ],
+      allowFreeformInput: true
+    }
+  ]
+})
+```
+
+If the user selects "Fill a knowledge gap", present pages with `confidence: low` or `contested: true` as options.
+
+**Skip this entire section** if wiki is not detected — proceed directly to coaching.
 
 ### NEVER auto-end the session
 
@@ -114,6 +198,64 @@ When in learning mode, follow these guidelines throughout the conversation:
    - First, quote relevant excerpts from the provided documentation or code
    - Then, provide a clear, accessible explanation in plain language
    - Highlight connections to concepts the user already knows
+
+### Wiki-Aware Teaching Behaviors (wiki-aware mode only)
+
+When wiki-aware mode is active, three additional teaching modes are available:
+
+**16. Preparation Mode — Teach from existing knowledge**
+
+Before explaining a topic:
+- Search the wiki for relevant pages (`search_files` for key terms)
+- If the user already has a page on the topic:
+  - Acknowledge: "I see you already have [[page-name]] in your wiki"
+  - Ask where to start: continue from the page's current depth, or revisit foundations
+  - Use the page's content as the teaching baseline — don't re-explain what's already written
+- If related pages exist (linked or tagged):
+  - Build on existing knowledge: "You already understand [[concept-A]] from your wiki. [[concept-B]] extends that by..."
+  - Surface cross-references the user may not have noticed
+- If no relevant pages exist:
+  - Note this is new territory for the wiki — teach normally, flag as save candidate later
+
+**17. Socratic Discovery Mode — Guide wiki exploration**
+
+Instead of answering questions directly, guide the learner to discover answers from their own wiki:
+- When a question maps to wiki content, redirect: "Before I explain — check [[page-name]] in your wiki. What does it say about {aspect}? What's your interpretation?"
+- After the user reads, probe with Socratic questions:
+  - "Does that match what you expected?"
+  - "How does that connect to [[other-page]]?"
+  - "What's missing from that page — what question does it leave open?"
+- Help discover hidden connections between pages the user hasn't linked
+- When the user discovers something new, offer to update the wiki page
+
+**18. Gap-Driven Mode — Coach from quality signals**
+
+Use wiki quality metadata to identify coaching opportunities:
+- Pages with `confidence: low` — the learner has surface-level understanding; coach deeper
+- Pages with `contested: true` or `contradictions: [...]` — the learner has unresolved confusion; coach toward clarity
+- Pages with only 1 source — understanding may be narrow; broaden perspective
+- Pages not updated in 90+ days — knowledge may be stale; revisit and update
+
+When starting a gap-driven session:
+```
+ASK_TOOL({
+  questions: [
+    {
+      header: "Knowledge Gaps",
+      question: "Your wiki has these areas that could benefit from deeper exploration:",
+      options: [
+        { label: "[[page-a]] — confidence: low" },
+        { label: "[[page-b]] — contested: unresolved contradiction with [[page-c]]" },
+        { label: "[[page-d]] — single source, may need broader perspective" },
+        { label: "Skip — I have a specific topic in mind" }
+      ],
+      allowFreeformInput: true
+    }
+  ]
+})
+```
+
+After the coaching session on a gap, offer to update the wiki page's confidence/content.
 
 ### Explanation Style
 
@@ -385,11 +527,11 @@ Support these shorthand patterns:
 
 #### Default Save Location
 
-Within the vault, notes are saved to `AI-Chats/` by default:
+Within the vault, notes are saved to `{COACH_SAVE_ROOT}/` by default:
 
 ```
 {obsidian-vault}/
-├── AI-Chats/
+├── {COACH_SAVE_ROOT}/
 │   ├── _INDEX.md                 # Auto-generated index
 │   ├── concepts/                 # Conceptual explanations
 │   ├── code/                     # Code walkthroughs
@@ -397,6 +539,10 @@ Within the vault, notes are saved to `AI-Chats/` by default:
 │   ├── daily/                    # Date-based quick notes
 │   └── plans/                    # Implementation plans (from planning-with-files)
 ```
+
+> In wiki-aware mode, notes can also be saved directly into the wiki structure
+> (see "Wiki Save Mode" below). The `{COACH_SAVE_ROOT}/` path remains available
+> as a fallback for notes that don't fit the wiki's domain scope.
 
 ### Step 1: Identify What to Save
 
@@ -426,6 +572,46 @@ Ask or infer (use sensible defaults if not provided):
 - **Topic/Title**: What is this note about?
 - **Tags**: Keywords for categorization (will be used in frontmatter AND inline)
 - **Category**: concepts | code | diagrams | daily
+
+### Step 2.5: Choose Save Target (wiki-aware mode only)
+
+> Skip this step entirely in standard mode — proceed directly to Step 3.
+
+In wiki-aware mode, after gathering metadata, determine the save destination:
+
+```
+ASK_TOOL({
+  questions: [
+    {
+      header: "Save Destination",
+      question: "Where should this insight be saved?",
+      options: [
+        { label: "Create a new wiki page", recommended: true },
+        { label: "Update an existing wiki page" },
+        { label: "Save as a regular note (" + COACH_SAVE_ROOT + ")", description: "For content outside the wiki's domain scope" }
+      ],
+      allowFreeformInput: true
+    }
+  ]
+})
+```
+
+**If "Create a new wiki page":**
+- Determine wiki page type: `entity`, `concept`, `comparison`, or `query`
+- Place in the appropriate wiki directory: `entities/`, `concepts/`, `comparisons/`, or `queries/`
+- Use wiki frontmatter format (see Step 3 wiki variant below)
+- Follow wiki naming conventions from `SCHEMA.md`
+- After saving: update wiki's `index.md` and `log.md`
+
+**If "Update an existing wiki page":**
+- Search wiki for relevant pages using `search_files`
+- Present candidates via `ASK_TOOL`
+- After selecting: read the existing page, merge new content, bump `updated` date
+- Handle contradictions per the wiki's Update Policy (note both positions, don't silently overwrite)
+
+**If "Save as a regular note":**
+- Proceed with standard Step 3 format
+- Save to `{COACH_SAVE_ROOT}/{category}/`
 
 ### Step 3: Format the Note with Obsidian Syntax
 
@@ -493,6 +679,52 @@ within the save scope. Text and diagrams are inseparable pairs.}
 *Saved from AI chat on {YYYY-MM-DD}*
 ```
 
+### Step 3 (Wiki Variant): Format with Wiki Frontmatter
+
+> Use this format when the save target is a wiki page (chosen in Step 2.5).
+
+```markdown
+---
+title: "{Title}"
+created: {YYYY-MM-DD}
+updated: {YYYY-MM-DD}
+type: {entity|concept|comparison|query}
+tags: [{from wiki taxonomy in SCHEMA.md}]
+sources: [coaching-session]
+confidence: {high|medium|low}
+---
+
+# {Title}
+
+{Main content here — include ALL text AND associated Mermaid diagrams.
+Use [[wikilinks]] to link to at least 2 other wiki pages.}
+
+## Key Insights
+
+- {Insight 1 from coaching session}
+- {Insight 2 from coaching session}
+
+## Open Questions
+
+- {Questions that remain unresolved after the session}
+
+## Related
+
+- [[{Related Wiki Page 1}]]
+- [[{Related Wiki Page 2}]]
+
+---
+
+*Synthesized from coaching session on {YYYY-MM-DD}*
+```
+
+**Wiki frontmatter rules:**
+- `type` must be one of: entity, concept, comparison, query
+- `tags` must come from the wiki's taxonomy in `SCHEMA.md`
+- `confidence` defaults to `medium` for single-session insights; use `low` for speculative ideas
+- Cross-reference: minimum 2 `[[wikilinks]]` to other wiki pages
+- Provenance: if this page synthesizes insights from 3+ wiki sources, add `^[raw/path/source.md]` markers
+
 ### Step 4: Handle Different Content Types
 
 #### For Diagrams (Mermaid)
@@ -559,7 +791,7 @@ Only proceed to Step 5 when all in-scope diagrams are present.
 ### Step 5: Save and Organize
 
 1. **Check vault exists**: Verify the Obsidian vault path is accessible
-2. **Create directories**: Ensure `AI-Chats/{category}/` exists
+2. **Create directories**: Ensure `{COACH_SAVE_ROOT}/{category}/` exists (standard) or wiki directory exists (wiki mode)
 3. **Handle duplicates**:
    - If file exists with same name, **append** with a date separator:
      ```markdown
@@ -570,12 +802,35 @@ Only proceed to Step 5 when all in-scope diagrams are present.
      ```
 4. **Confirm save**: Report full path relative to vault root
 
+### Step 5.5: Update Wiki Navigation (wiki-aware mode only)
+
+> Skip this step in standard mode.
+
+After saving to the wiki, maintain wiki navigation:
+
+1. **Update `index.md`**:
+   - Add new page under the correct section (Entities/Concepts/Comparisons/Queries), alphabetically
+   - Format: `- [[{page-slug}|{Title}]] — {one-line summary}`
+   - Update "Total pages" count and "Last updated" date in the index header
+
+2. **Append to `log.md`**:
+   ```markdown
+   ## [YYYY-MM-DD] create | {Title}
+   - Created via coaching session
+   - File: {wiki-path}/{page-slug}.md
+   - Confidence: {level}
+   ```
+
+3. **For updated pages** (not new):
+   - Log as `update` instead of `create`
+   - List specific sections changed
+
 ### Step 6: Update Index
 
-If `AI-Chats/_INDEX.md` exists, append an entry using wikilinks:
+If `{COACH_SAVE_ROOT}/_INDEX.md` exists, append an entry using wikilinks:
 
 ```markdown
-- [[AI-Chats/{category}/{filename}|{Title}]] - {date} - {brief description} #ai-chat
+- [[{COACH_SAVE_ROOT}/{category}/{filename}|{Title}]] - {date} - {brief description} #ai-chat
 ```
 
 If `_INDEX.md` doesn't exist, create it:
@@ -600,6 +855,9 @@ tags:
 |------|-------|----------|------|
 | {date} | [[{path}\|{title}]] | {category} | {tags} |
 ```
+
+> In wiki-aware mode, this index is the wiki's `index.md` — updated in Step 5.5 above.
+> The `{COACH_SAVE_ROOT}/_INDEX.md` is only maintained for notes saved outside the wiki.
 
 ### Step 7: Post-Save Continuation — MANDATORY
 
@@ -648,16 +906,21 @@ Detect these (case-insensitive) as plan requests:
 
 ### Plan File Location
 
-All plan files MUST be created under the Obsidian vault's `AI-Chats/plans/` directory, using a topic-based subdirectory:
+All plan files MUST be created under the Obsidian vault's `{COACH_SAVE_ROOT}/plans/` directory, using a topic-based subdirectory:
 
 ```
-{obsidian-vault}/AI-Chats/plans/{topic-slug}/
+{obsidian-vault}/{COACH_SAVE_ROOT}/plans/{topic-slug}/
 ├── task_plan.md
 ├── findings.md
 └── progress.md
 ```
 
 Where `{topic-slug}` is a kebab-case name derived from the plan topic (e.g., `implement-auth-middleware`, `refactor-data-layer`). This keeps plans organized alongside other coaching notes and discoverable within Obsidian.
+
+> **Wiki-aware mode**: If the plan topic fits the wiki's domain scope, the user may choose
+> to save the plan into the wiki instead. In this case, create a `queries/` page that
+> captures the implementation plan as a structured query result, with `type: query` in
+> frontmatter. The `{COACH_SAVE_ROOT}/plans/` path remains available as a fallback.
 
 ### Handoff Protocol
 
@@ -730,6 +993,34 @@ Only execute this when the user **explicitly** requests to end the session (see 
 When the user ends the session:
 
 1. Provide a brief summary of topics covered
+
+2. **Wiki contribution summary (wiki-aware mode only)**:
+
+   If the session was in wiki-aware mode, summarize what was contributed to the wiki:
+   - New pages created (list paths)
+   - Existing pages updated (list paths + what changed)
+   - Confidence levels set or changed
+   - Cross-references added
+   - Any unresolved contradictions flagged
+
+   Example:
+   ```
+   ## Wiki Contributions This Session
+
+   - Created: concepts/gradient-descent-variants.md (confidence: medium)
+   - Updated: entities/loss-functions.md (added 3 new variants, bumped confidence low→medium)
+   - New cross-ref: [[gradient-descent-variants]] ↔ [[loss-functions]]
+   - Flagged: [[optimization-landscape]] still contested — follow-up needed
+   ```
+
+   Append a single log entry to wiki `log.md`:
+   ```markdown
+   ## [YYYY-MM-DD] query | Coaching session summary
+   - Topics: {topic list}
+   - Pages created: {N}
+   - Pages updated: {N}
+   - Confidence changes: {list}
+   ```
 
 ---
 
