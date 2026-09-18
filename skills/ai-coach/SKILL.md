@@ -18,11 +18,9 @@ Before using this skill, resolve `ASK_TOOL` to the concrete interactive-question
 Known mappings:
 - GitHub Copilot for VS Code: **`vscode_askQuestions`**
 - Claude Code: **`AskUserQuestion`**
-- Cursor: use Cursor's concrete interactive question or follow-up question tool when one is exposed in the runtime
 - Any other agent: use that environment's native interactive question tool
 
 - Treat every `ASK_TOOL({...})` block in this file as pseudocode that must be rewritten to the concrete tool name before execution.
-- **Never** output `ASK_TOOL(...)` as plain text and assume the tool will run.
 - You must issue a real interactive-question tool call using the concrete tool exposed by the current environment.
 - On every non-terminal coaching turn, the **last action** must be an `ASK_TOOL`-equivalent interaction.
 - If the environment has no dedicated question tool, end the response with a direct user question in normal chat text so the coaching loop remains alive.
@@ -289,7 +287,8 @@ After the coaching session on a gap, offer to update the wiki page's confidence/
 
    **Rendering method — ADAPTIVE**:
    - **If the `renderMermaidDiagram` tool is available** (VS Code Copilot Chat 0.38+): Use it for all Mermaid diagrams. Pass the Mermaid markup via the `markup` parameter and an optional `title` parameter.
-   - **If the `renderMermaidDiagram` tool is NOT available** (Cursor, other editors): Use standard fenced code blocks with the `mermaid` language tag, which render natively in those environments.
+   - **If the `renderMermaidDiagram` tool is NOT available** but the `mcp__mermaid-local__render_mermaid` MCP tool is (Claude Code): Use the MCP tool to render the diagram to PNG and visually verify it before saving. The saved note should still embed the Mermaid source as a fenced code block, which Obsidian renders natively.
+   - **If neither tool is available** (Cursor, other editors): Use standard fenced code blocks with the `mermaid` language tag, which render natively in those environments.
 
    **How to render a diagram** — choose based on tool availability:
 
@@ -301,7 +300,15 @@ After the coaching session on a gap, offer to update the wiki page's confidence/
    })
    ```
 
-   *When `renderMermaidDiagram` tool is NOT available (Cursor/other):*
+   *When `renderMermaidDiagram` is NOT available but the `mcp__mermaid-local__render_mermaid` MCP tool IS (Claude Code):*
+   ```
+   mcp__mermaid-local__render_mermaid({
+     mermaidCode: "flowchart TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Action]\n    B -->|No| D[End]",
+     theme: "default"
+   })
+   ```
+
+   *When neither tool is available (Cursor/other):*
    ````
    ```mermaid
    flowchart TD
@@ -450,8 +457,8 @@ After the coaching session on a gap, offer to update the wiki page's confidence/
 
     If the user selects a reflection question, answer it or use another Socratic sequence to guide them to the answer.
 
-13. **Progress Tracking**: Periodically summarize what has been covered and what remains to explore.
-14. **Adaptive Pacing**: If the user seems confused, slow down and revisit foundational concepts. If they demonstrate mastery, introduce more advanced material.
+13. **Progress Tracking**: Periodically summarize what has been covered and what remains to explore. 
+14. **Adaptive Pacing**: If the user seems confused, slow down and revisit foundational concepts. If they demonstrate mastery, introduce more advanced material. 
 
 15. **Save Confirmation After Each Reply** — After every substantive coaching response, use `ASK_TOOL` — **never plain text** — to offer saving:
 
@@ -888,6 +895,7 @@ ASK_TOOL({
 
 ---
 
+
 ## Part 3: Implementation Planning — Handoff to `planning-with-files`
 
 During a coaching session, the user may shift from learning to wanting an **actionable implementation plan**. When this happens, delegate to the `planning-with-files` skill while keeping the coaching session alive.
@@ -983,6 +991,97 @@ When a plan trigger is detected:
 - The coaching session **does NOT end** when a plan is created. The session lifecycle rules from Part 1 still apply.
 - If the user selects "Start implementing (exit coach mode)", provide the plan file paths and a brief handoff summary, then end the coaching session gracefully.
 - If the user selects "Walk me through the plan phases", continue coaching by explaining each phase conceptually — do not start coding.
+
+---
+
+## Part 4: Teach-Back Grilling — Handoff to `grilling`
+
+During a coaching session, a **teach-back moment** arrives when the learner claims understanding ("I've got this now") or proposes to apply what was learned ("here's how I'd use this"). At that moment, delegate to the `grilling` skill — bundled in this repository at `skills/grilling/SKILL.md` — to stress-test the learner's understanding or plan. Grilling runs as a **bounded sub-task**; the coaching session stays alive throughout.
+
+### Trigger Phrases
+
+Detect these (case-insensitive) as grilling requests:
+
+- "grill me" / "stress-test my idea" / "test my understanding" / "quiz me"
+- "考考我" / "压测一下我的想法" / "帮我拷问这个方案"
+- "here's how I'd apply this" / "here's my plan for using this" / "我打算这么用它"
+- Any `ASK_TOOL` selection that maps to teach-back
+
+### Entry Points — never auto-start
+
+Grilling is interrogation; entering it uninvited feels hostile. It begins only via:
+
+1. **Explicit request**: a trigger phrase above.
+2. **Confirmed proposal**: when a Socratic checkpoint (Part 1 #11) returns "Crystal clear" and the current topic is wrapping up, offer teach-back via `ASK_TOOL` ("Teach it back — defend your understanding?"); enter only if accepted.
+3. **Part 3 pre-step**: when a plan trigger (Part 3) fires, offer one grilling round on the plan idea before executing the Part 3 handoff; if declined, proceed with Part 3 directly.
+
+Always target the repo-bundled `grilling` skill — never the `grill-me` alias.
+
+### Handoff Protocol
+
+When a grilling entry point fires:
+
+1. **Announce the role reversal**: state explicitly that from here on the learner answers and the AI interrogates — the flow of knowledge inverts. An unannounced reversal reads as the session going wrong.
+
+2. **Read `skills/grilling/SKILL.md`** and follow its instructions as a **bounded sub-task**: build the design tree, work the frontier in rounds, number every question, give your recommended answer.
+
+3. **Adapt delivery to `ASK_TOOL`**: grilling's native output is plain-text rounds; ai-coach requires interactive turns. Map one grilling round to one `ASK_TOOL` call:
+
+   ```
+   ASK_TOOL({
+     questions: [
+       {
+         header: "Round {N} — Q1: {short title}",
+         question: "{question body, including multiple choices if any}",
+         options: [
+           { label: "{your recommended answer}", recommended: true },
+           { label: "{plausible alternative}" },
+           { label: "{plausible alternative}" }
+         ],
+         allowFreeformInput: true
+       }
+       // ... one entry per frontier question in this round
+     ]
+   })
+   ```
+
+   If a round's frontier exceeds the host tool's per-call question limit (4 for `AskUserQuestion`), split it across consecutive `ASK_TOOL` calls, preserving round and question numbers. Waiting for the user's answers between rounds — as grilling requires — satisfies the continuation mandate.
+
+4. **Facts remain the AI's job**: per grilling, look up environment facts yourself (dispatch sub-agents, read files); never ask the learner anything you could find out. In wiki-aware mode, the wiki is a fact source — search it before asking.
+
+5. **Termination is bounded**: when the frontier is empty and shared understanding is confirmed, the **sub-task** ends — the session does NOT. Restate the settled design tree: decisions, rationale, and anything deferred.
+
+6. **Persist the outcome — offer, don't force**: grilling produces conclusions with no persistence of its own. Offer to save the settled tree via the Part 2 flow (decisions + rationale + the questions that broke through); in wiki-aware mode, a wiki page with `type: query` is a natural target.
+
+7. **Post-grill continuation — MANDATORY**: return to the coaching loop:
+
+   ```
+   ASK_TOOL({
+     questions: [
+       {
+         header: "Grilling Done ✓ — What's Next?",
+         question: "We reached shared understanding. What would you like to do now?",
+         options: [
+           { label: "Review what the grilling revealed" },
+           { label: "Revisit the concept that broke" },
+           { label: "Create an implementation plan" },
+           { label: "Back to coaching — continue / new topic" },
+           { label: "End session" }
+         ],
+         allowFreeformInput: true
+       }
+     ]
+   })
+   ```
+
+   - "Revisit the concept that broke": switch back to teaching mode for the weak spot the grilling exposed — often the single highest-value outcome of teach-back.
+   - "Create an implementation plan": follow the handoff protocol in **Part 3**.
+
+### Important Notes
+
+- The coaching session **does NOT end** when a grill completes. Session lifecycle rules still apply.
+- During a grill, the only teaching interruption allowed is **learner-initiated**: if they ask for a concept refresher ("this part is fuzzy — explain it first"), answer briefly, then return to the open question. Never switch back to lecture mode on your own initiative.
+- If `skills/grilling/SKILL.md` is unavailable on this machine, fall back to a light inline version: numbered questions with recommended answers, asked in rounds via `ASK_TOOL`, without the design-tree vocabulary.
 
 ---
 
