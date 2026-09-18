@@ -201,6 +201,51 @@ pipeline_options = PdfPipelineOptions()
 pipeline_options.ocr_options.lang = ["en", "de", "fr"]
 ```
 
+## Batch Convert to Files (Recommended for bulk processing)
+
+For converting all PDF/DOCX files in a directory to Markdown/HTML/JSON files, use `batch_convert_to_files`:
+
+```python
+from scripts.wrapper import batch_convert_to_files
+
+# Basic: convert all PDF and DOCX files in a directory to .md files
+result = batch_convert_to_files("Z:/documents")
+
+# With options
+result = batch_convert_to_files(
+    directory="Z:/documents",
+    extensions=[".pdf", ".docx"],
+    output_format="markdown",
+    enable_ocr=False,       # Default False - much faster for text-based PDFs
+    skip_existing=True,     # Default True - skip already-converted files
+    skip_image_only=True,   # Default True - skip pure-image PDFs
+)
+
+# Check results
+print(f"Converted: {len(result['converted'])}")
+print(f"Skipped: {len(result['skipped'])}")
+print(f"Failed: {len(result['failed'])}")
+```
+
+### What it handles automatically
+
+| Scenario | Behavior |
+|----------|----------|
+| Text-based PDF | Fast conversion with OCR disabled |
+| Scanned/image-only PDF | Detected and skipped with reason `image_only` |
+| Already converted file | Skipped if output .md exists and is non-empty |
+| Corrupted DOCX (bad images) | Falls back to direct XML parsing of document.xml |
+| Chinese/non-ASCII filenames | Handles encoding on Windows |
+| Incremental re-runs | Only processes files without valid output |
+
+### CLI batch usage
+
+```bash
+python scripts/wrapper.py /path/to/docs --batch
+python scripts/wrapper.py /path/to/docs --batch --ocr
+python scripts/wrapper.py /path/to/docs --batch --format json
+```
+
 ## Enhanced DOCX Converter (LaTeX + Images)
 
 When docling's default DOCX conversion fails on documents with complex mathematical equations (OMML format), use the enhanced converter that provides:
